@@ -53,6 +53,8 @@ export default {
     saveEmbedding(embedding) {
   // Log the embedding data to the console for debugging
   console.log('Face embedding data:', embedding);
+  localStorage.setItem('faceEmbedding', JSON.stringify(embedding));
+  alert("Face embedding data saved successfully!");
 
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(embedding));
   const downloadAnchor = document.createElement('a');
