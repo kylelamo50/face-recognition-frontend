@@ -3,6 +3,7 @@ import TestView from '@/views/TestView.vue'
 import CompareView from '@/views/CompareView.vue'
 import BaseView from '@/views/BaseView.vue';
 import Base2View from '@/views/Base2View.vue';
+import Base3View from '@/views/Base3View.vue';
 
 
 const router=createRouter({
@@ -27,6 +28,11 @@ const router=createRouter({
   path:'/base2',
   name:'base2',
   component: Base2View
+},
+{
+  path:'/base3',
+  name:'base3',
+  component: Base3View
 }
   ]
 });

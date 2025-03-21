@@ -9,26 +9,22 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import * as faceapi from 'face-api.js';
 
-export default {
-  data() {
-    return {
-      video: null,
-    };
-  },
-  methods: {
-    async startCamera() {
-      await this.loadModels();
-      this.video = this.$refs.video;
-      const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-      this.video.srcObject = stream;
-      console.log('Camera started',stream);
-      
-      setTimeout(this.captureFace, 3000); // Give time for camera to start
-    },
-    async loadModels() {
+const video = ref(null);
+
+const startCamera = async () => {
+  await loadModels();
+  const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+  video.value.srcObject = stream;
+  console.log('Camera started', stream);
+
+  setTimeout(captureFace, 3000); // Give time for camera to start
+};
+
+const loadModels = async () => {
   try {
     console.log('Loading models...');
     await faceapi.nets.tinyFaceDetector.loadFromUri('/weights');
@@ -39,18 +35,20 @@ export default {
     console.error('Error loading models:', error);
     alert("There was an issue loading the models. Please check the model files and paths.");
   }
-},
-    async captureFace() {
-      const detections = await faceapi.detectSingleFace(this.video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-      
-      if (detections) {
-        const faceEmbedding = detections.descriptor;
-        this.saveEmbedding(faceEmbedding);
-      } else {
-        alert("No face detected. Try again!");
-      }
-    },
-    saveEmbedding(embedding) {
+};
+
+const captureFace = async () => {
+  const detections = await faceapi.detectSingleFace(video.value, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+  
+  if (detections) {
+    const faceEmbedding = detections.descriptor;
+    saveEmbedding(faceEmbedding);
+  } else {
+    alert("No face detected. Try again!");
+  }
+};
+
+const saveEmbedding = (embedding) => {
   // Log the embedding data to the console for debugging
   console.log('Face embedding data:', embedding);
   localStorage.setItem('faceEmbedding', JSON.stringify(embedding));
@@ -63,10 +61,8 @@ export default {
   document.body.appendChild(downloadAnchor);
   downloadAnchor.click();
   document.body.removeChild(downloadAnchor);
-}
-
-  }
 };
+
 </script>
 
 <style>
